@@ -1,0 +1,20 @@
+{
+  "name": "komservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/YuechenLuo/KOMService.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YuechenLuo/KOMService/issues"
+  },
+  "homepage": "https://github.com/YuechenLuo/KOMService#readme"
+}
