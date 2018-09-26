@@ -15,16 +15,25 @@ router.get('/test/:param', (req, res) => {
 router.post('/signup', (req, res) => {
     userModule.signUp(new User(req))
     .then(() => {
-        res.send("SignUp success!")
+        res.status(200).send();
     }, (mes) => {
-        res.send(`SignUp failed! (${mes})`)
+        respond(res, 400, `SignUp failed! (${mes})`);
     });
 });
 
 // [POST] user login
-router.get('/login', (req, res) => {
-    res.send(appConfig.dbUser);
+router.post('/login', (req, res) => {
+    userModule.authentication(new User(req))
+    .then(() => {
+        res.status(200).send();
+    }, (mes) => {
+        respond(res, 401, mes);
+    });
 });
 
+function respond(res, code, mes) {
+    console.log(code);
+    res.status(code).json({'message':mes})
+}
 
 module.exports = router;

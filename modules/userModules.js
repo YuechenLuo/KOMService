@@ -9,21 +9,39 @@ const USER_DB = 'users';
 exports.signUp = (user) => {
     return new Promise((resolve, reject) => {
         // Find duplication
-        console.log(dao.query(USER_DB, {email: user.email}));
-        if ( dao.query(USER_DB, {email: user.email}) != 0 ) {
-            reject('email used!');
-        }
-        if ( dao.query(USER_DB, {username: user.username}) != 0 ) {
-            reject('username used!');
-        }
+        dao.query(USER_DB, {
+            $or:[
+            {'email': user.email},
+            {'username': user.username}]
+        })
+        .then((res) => {
+            console.log(res);
+            if (res.length) return reject('User already exist!');  
+            // sign up
+            user.password = passwordHash.generate(user.password, {length:256});
+            dao.insert(USER_DB, user)
+            resolve();
+        }, () => {
+            reject('server error');
+        });
 
-        // sign up
-        user.password = passwordHash.generate(user.password, {length:256});
-        dao.insert(USER_DB, user)
-        resolve();
     });
 }
 
 exports.authentication = (user, resolve, reject) => {
-    const hashedPasswod = passwordHash.generate(user.password, {length:256});
+    return new Promise((resolve, reject) => {
+        // Find user
+        dao.query(USER_DB, {email: user.email})
+        .then((rows) => {
+            if (!rows.length) return reject('User not exist');
+
+            // compare password hash
+            if (passwordHash.verify(user.password, rows[0].password)) {
+                resolve();
+            } else {
+                reject('Wrong password');
+            }
+        });
+        
+    });
 }
