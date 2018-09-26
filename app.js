@@ -9,8 +9,8 @@ const app = express();
 
 // Config app
 if ( process.argv.length < 4 ) {
-	console.log('required db username and password');
-	process.exit();
+    console.log('required db username and password');
+    process.exit();
 }
 appConfig['dbUrl'] = `mongodb://${process.argv[2]}:${process.argv[3]}@${appConfig['dbUrl']}/${appConfig['dbName']}`;
 
@@ -23,7 +23,7 @@ app.use(bodyParser.json());
  * Begin endpoints
  */
 app.get('/', function(req, res) {
-	res.send("API test!");
+    res.send("API test!");
 });
 
 // user apis
