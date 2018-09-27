@@ -3,7 +3,7 @@ const passwordHash = require('password-hash');
 const jwt = require('jsonwebtoken');
 const dao = require('./daoModule');
 const appConfig = require('../config');
-const ObjectId = require('mongodb').ObjectId;
+const uuid = require('node-uuid');
 
 const USER_DB = 'users';
 
@@ -19,7 +19,14 @@ exports.signUp = (user) => {
         .then((res) => {
             if (res.length) return reject('User already exist!');  
             // sign up
+            user._id = uuid.v1();
             user.password = passwordHash.generate(user.password, {length:256});
+            // initialize db structure
+            user.reimburseInfo = {
+                credit: 1500,
+                records: []
+            }
+
             dao.insert(USER_DB, user)
             resolve();
         }, () => {
@@ -40,7 +47,7 @@ exports.authentication = (user) => {
             if (passwordHash.verify(user.password, rows[0].password)) {
                 // TODO: Issue a token
                 const user_id = rows[0]._id;
-                rows[0]['password'] = null;
+                delete rows[0]['password'];
                 // TODO: delete password field completely
 
                 const accessToken = jwt.sign({
@@ -81,13 +88,12 @@ exports.verify_token = (token) => {
 
 exports.retrieveUserInfo = (user_id) => {
     return new Promise((resolve, reject) => {
-        dao.query(USER_DB, {_id: ObjectId(user_id)})
+        dao.query(USER_DB, {_id: user_id})
         .then((res) => {
             // Delete cretical information
             // TODO: remove field
-            res[0]['_id'] = null;
-            res[0]['password'] = null;
-            res[0]['accessToken'] = null;
+            delete res[0]['password'];
+            delete res[0]['accessToken'];
 
             resolve(res[0]);
         }, (err) => {

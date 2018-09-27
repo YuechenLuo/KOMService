@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const User = require('../models/User');
-const userModule = require('../modules/userModules');
+const userModule = require('../modules/userModule');
 const appConfig = require('../config');
 
 const router = express.Router();
@@ -41,7 +41,7 @@ router.use((req, res, next) => {
         req.userId = id;
         next();
     }, (err) => {
-        respond(res, 403, `Authentication failed: ${err}`);
+        respond(res, 500, `Authentication failed. (Error: ${err})`);
     });
 
 });

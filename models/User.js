@@ -1,5 +1,5 @@
 /**
- * user model class
+ * User model class
  * by Peter
  */
 'use strict';
