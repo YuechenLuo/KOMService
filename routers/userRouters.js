@@ -24,10 +24,33 @@ router.post('/signup', (req, res) => {
 // [POST] user login
 router.post('/login', (req, res) => {
     userModule.authentication(new User(req))
-    .then(() => {
-        res.status(200).send();
+    .then((userInfo) => {
+        res.status(200).json(userInfo);
     }, (mes) => {
         respond(res, 401, mes);
+    });
+});
+
+// A middleware to verify access token
+router.use((req, res, next) => {
+    const token = req.headers.accesstoken;
+    if (!token) respond(res, 403, 'Authentication failed.');
+
+    userModule.verify_token(token)
+    .then((id) => {
+        req.userId = id;
+        next();
+    }, (err) => {
+        respond(res, 403, `Authentication failed: ${err}`);
+    });
+
+});
+
+// [GET] get my profile
+router.get('/info', (req, res) => {
+    userModule.retrieveUserInfo(req.userId)
+    .then((info) => {
+        res.status(200).json(info);
     });
 });
 

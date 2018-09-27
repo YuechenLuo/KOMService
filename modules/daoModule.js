@@ -6,15 +6,17 @@ const dbName = require('../config').dbName;
 const dbConfig = { useNewUrlParser: true };
 
 exports.insert = (collName, obj) => {
-    MongoClient.connect(url, dbConfig, (err, db) => {
-        if (err) return reject(err);
-        const dbo = db.db(dbName);
-
-        dbo.collection(collName).insertOne(obj, (err, res) => {
+    return new Promise((resolve, reject) => {
+        MongoClient.connect(url, dbConfig, (err, db) => {
             if (err) return reject(err);
-            db.close();
-        });
+            const dbo = db.db(dbName);
 
+            dbo.collection(collName).insertOne(obj, (err, res) => {
+                if (err) return reject(err);
+                db.close();
+                resolve();
+            });
+        });
     });
 }
 
@@ -24,7 +26,6 @@ exports.query = (collName, query) => {
         MongoClient.connect(url, dbConfig, (err, db) => {
             if (err) return reject(err);
             const dbo = db.db(dbName);
-
             dbo.collection(collName).find(query).toArray((err, res) => {
                 if (err) return reject(err);
                 db.close();
@@ -34,5 +35,21 @@ exports.query = (collName, query) => {
 
         });
         
+    });
+}
+
+exports.update = (collName, query, new_value) => {
+    return new Promise((resolve, reject) => {
+
+        MongoClient.connect(url, dbConfig, (err, db) => {
+            if (err) return reject(err);
+            const dbo = db.db(dbName);
+
+            dbo.collection(collName).updateOne(query, new_value, (err) => {
+                if (err) return reject(err);
+                db.close();
+                resolve();
+            })
+        });
     });
 }
