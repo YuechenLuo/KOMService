@@ -29,7 +29,6 @@ exports.query = (collName, query) => {
             dbo.collection(collName).find(query).toArray((err, res) => {
                 if (err) return reject(err);
                 db.close();
-                // console.log(res);
                 resolve(res);
             });
 
