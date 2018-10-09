@@ -51,12 +51,15 @@ router.get('/info', (req, res) => {
     userModule.retrieveUserInfo(req.userId)
     .then((info) => {
         res.status(200).json(info);
+    }, (err) => {
+        respond(res, 500, `Authentication failed. (Error: ${err})`);
+        // console.log(err);
     });
 });
 
 function respond(res, code, mes) {
-    console.log(code);
-    res.status(code).json({'message':mes})
+    console.log({'message':mes});
+    res.status(code).json({'message':mes});
 }
 
 module.exports = router;

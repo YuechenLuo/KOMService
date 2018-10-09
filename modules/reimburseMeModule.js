@@ -20,7 +20,23 @@ exports.reportExpense = (user_id, expense) => {
                 "reimburseInfo.credit": -expense.amount
             }
         }).then(() => {
-            resolve();
+            resolve(expense);
+        }, (err) => {
+            reject(err);
+        });
+    });
+}
+
+exports.update = (user_id, expense) => {
+    return new Promise((resolve, reject) => {
+        dao.update(USER_DB, {
+            "reimburseInfo.records._id": expense._id
+        }, {
+            $set: {
+                "reimburseInfo.records.$": expense
+            }
+        }).then((res) => {
+            resolve(res);
         }, (err) => {
             reject(err);
         });

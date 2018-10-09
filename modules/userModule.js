@@ -80,8 +80,16 @@ exports.authentication = (user) => {
 exports.verify_token = (token) => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, appConfig.secretKey, (err, userInfo) => {
+            // verify if expire
             if (err) return reject(err);
-            resolve(userInfo.userId);
+            dao.query(USER_DB, {"_id": userInfo.userId})
+            .then((res) => {
+                if (res.length === 0) reject("User not exist.");
+                else resolve(userInfo.userId);
+            }, (err) => {
+                reject(err);
+            });
+            
         });
     });
 }
@@ -90,8 +98,8 @@ exports.retrieveUserInfo = (user_id) => {
     return new Promise((resolve, reject) => {
         dao.query(USER_DB, {_id: user_id})
         .then((res) => {
+            if (res.length == 0) reject("user not found.");
             // Delete cretical information
-            // TODO: remove field
             delete res[0]['password'];
             delete res[0]['accessToken'];
 
