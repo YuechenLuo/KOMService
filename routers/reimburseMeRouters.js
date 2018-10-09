@@ -25,24 +25,24 @@ router.use((req, res, next) => {
 
 // [PUT] Add a new expense report
 router.put('/newExpense', (req, res) => {
-	reimburseMeModule.reportExpense(req.userId, new Expense(req))
-	.then((obj) => {
-		respondObj(res, 200, obj)
-	}, (err) => {
-		respond(res, 500, `Unable to create expense report. (Error: ${err})`);
-	});
+    reimburseMeModule.reportExpense(req.userId, new Expense(req))
+    .then((obj) => {
+        respondObj(res, 200, obj)
+    }, (err) => {
+        respond(res, 500, `Unable to create expense report. (Error: ${err})`);
+    });
 });
 
 
 // [PUT] update a reimbursement record
 router.put('/update', (req, res) => {
-	// TODO: update reimbursement
-	reimburseMeModule.update(req.userId, new Expense(req))
-	.then(() => {
-		res.status(200).send();
-	}, (err) => {
-		respond(res, 500, `Unable to update. (Error ${err})`)
-	});
+    // TODO: update reimbursement
+    reimburseMeModule.update(req.userId, new Expense(req))
+    .then(() => {
+        res.status(200).send();
+    }, (err) => {
+        respond(res, 500, `Unable to update. (Error ${err})`)
+    });
 });
 
 
@@ -51,7 +51,7 @@ function respond(res, code, mes) {
 }
 
 function respondObj(res, code, obj) {
-	res.status(code).json(obj);
+    res.status(code).json(obj);
 }
 
 module.exports = router;
