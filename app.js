@@ -3,17 +3,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const appConfig = require('./config');
 
-const HTTPport = 8080;
-
 const app = express();
 
 // Config app
-if ( process.argv.length < 5 ) {
-    console.log('usage: app [db username] [db password] [secret key]');
+if ( process.argv.length < 6 ) {
+    console.log('usage: app [PORT#] [db username] [db password] [secret key]');
     process.exit();
 }
-appConfig['dbUrl'] = `mongodb://${process.argv[2]}:${process.argv[3]}@${appConfig['dbUrl']}/${appConfig['dbName']}`;
-appConfig['secretKey'] = process.argv[4];
+
+appConfig['httpPort'] = process.argv[2];
+appConfig['dbUrl'] = `mongodb://${process.argv[3]}:${process.argv[4]}@${appConfig['dbUrl']}/${appConfig['dbName']}`;
+appConfig['secretKey'] = process.argv[5];
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -32,11 +32,11 @@ app.use('/reimburseMe', require('./routers/reimburseMeRouters'));
 app.use('/frm', require('./routers/frmRouters'));
 
 
-app.listen(HTTPport, function(err) {
+app.listen(appConfig.httpPort, function(err) {
     if (err) {
         return console.log(err);
     }
-    console.log('Server listening HTTP on port '+HTTPport);
+    console.log(`Server listening HTTP on port ${appConfig.httpPort}`);
 });
 
 
