@@ -34,7 +34,7 @@ router.post('/login', (req, res) => {
 // A middleware to verify access token
 router.use((req, res, next) => {
     const token = req.headers.accesstoken;
-    if (!token) respond(res, 403, 'Authentication failed.');
+    if (!token) return respond(res, 403, 'Authentication failed.');
 
     userModule.verify_token(token)
     .then((id) => {
