@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const appConfig = require('./config');
+const cors = require('cors');
 
 const HTTPport = 8080;
 
@@ -15,15 +16,20 @@ if ( process.argv.length < 5 ) {
 appConfig['dbUrl'] = `mongodb://${process.argv[2]}:${process.argv[3]}@${appConfig['dbUrl']}/${appConfig['dbName']}`;
 appConfig['secretKey'] = process.argv[4];
 
+// Enable CORS
+app.use(cors());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 
 /**
  * Begin endpoints
  */
 app.get('/', function(req, res) {
     res.send("API test!");
+});
+app.post('/', function(req, res) {
+    res.send({mes: "API post test!"});
 });
 
 // user apis
