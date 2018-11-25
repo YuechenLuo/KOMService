@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PennDrive</title>
+        <!-- <link rel="stylesheet" type="text/css" href="public/css/global.css"> -->
+        <!-- <link rel="stylesheet" type="text/css" href="public/css/dashboard.css"> -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <style type="text/css">
+            body {
+                margin: 0;
+                font-family: Helvetica;
+            }
+            body * {
+                box-sizing: border-box;
+            }
+            .nav-bar {
+                width: 100%;
+                height: 4rem;
+                background-color: #fff;
+                padding: 1rem 2rem;
+                overflow: hidden;
+                border-bottom: #aaa 1px solid;
+                top: 0;
+                position: fixed;
+                z-index: 1000;
+            }
+            .nav-bar h3 {
+                margin: 0;
+                font-size: 1.7em;
+                float: left;
+                cursor: pointer;
+            }
+            .nav-bar h4 {
+                margin: 0;
+                font-size: 1.2em;
+                display: inline-block;
+                color: #555;
+                cursor: pointer;
+            }
+            .nav-bar a {
+                text-decoration: none;
+                color: #222;
+            }
+            .nav-bar a:hover {
+                color: #777;
+            }
+
+            .nav-bar .user-info {
+                float: right;
+            }
+
+            .main-container {
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                margin-top: 4rem;
+                white-space: nowrap;
+            }
+            .main-container * {
+                white-space: normal;
+            }
+            .tool-bar-container {
+                height: 2.4rem;
+                width: 100%;
+                border-bottom: #ccc 1px solid;
+            }
+            .tool-bar {
+                margin: 0 auto;
+                width: 21rem;
+                height: 2.3rem;
+            }
+            .tool-bar a {
+                margin-right: 2rem;
+                cursor: pointer;
+            }
+            .tool-bar a:first-child {
+                margin-left: 2rem;
+            }
+            .tool-bar a img:nth-child(2) {
+                display: none;
+            }
+            .tool-bar a.disabled img:nth-child(1) {
+                display: none;
+            }
+            .tool-bar a.disabled img:nth-child(2) {
+                display: inline;
+                cursor: auto;
+            }
+            .tool-bar img {
+                height: 2.3rem;
+            }
+            #content-panel {
+                padding: 1rem 2rem;      
+            }
+            #content-panel .list-item {
+                display: inline-block;  
+                margin: 10px;
+                padding: 10px;
+                vertical-align: top;
+                border-radius: 6px;
+            }
+            #content-panel .list-item:hover {
+                background-color: #eee;
+            }
+            #content-panel .list-item.active {
+                background-color: #ddd;
+            }
+            #content-panel .list-item img {
+                display: block;
+            }
+            .list-item.type-d img {
+                width: 110px;
+                margin-top: 14px;
+            }
+            .list-item.type-f img {
+                height: 110px;
+                margin: 0 auto;
+            }
+            #content-panel .list-item a {
+                width: 110px;
+                max-height: 3.5rem;
+                margin: 0.3rem 0;
+                display: block;
+                text-align: center;
+                overflow-wrap: break-word;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+<body>
+    <div class='nav-bar'>
+        <h3><a href='/'>PennCloud</a></h3>
+        <div class='user-info'>
+            <h4></h4>
+            <a>log out</a>
+        </div>
+    </div>
+    <div class='main-container'>
+        <div class='tool-bar-container'>
+            <div class='tool-bar'>
+                <a id='uploadButton'><img src='/public/assets/cloud_upload.png'></a>
+                <a id='newDirectoryButton'><img src='/public/assets/add_directory.png'></a>
+                <a id='downloadButton' class='disabled'><img src='/public/assets/cloud_download.png'><img src='/public/assets/cloud_download_disabled.png'></a>
+                <a id='deleteButton' class='disabled'><img src='/public/assets/trash.png'><img src='/public/assets/trash_disabled.png'></a>
+            </div>
+        </div>
+        <div id='content-panel'></div>
+    </div>
+    <script type="text/javascript">
+        const renderContentItem = (data) => {
+            const item_type = data.type === 'directory' ? 'type-d' : 'type-f';
+            const item_logo = data.type === 'directory'
+            ? 'public/assets/directory.png'
+            : 'public/assets/file.png';
+            return `<div class='list-item ${item_type}' sequence=${data.sequence}>
+                <img src='${item_logo}'>
+                <a>${data.name}</a>
+            </div>`;
+        }
+
+        const renderContents = (data) => {
+            $('#content-panel').html('');
+            for (var i in data) {
+                data[i].sequence = i;
+                $('#content-panel').append(renderContentItem(data[i]));
+            }
+            contentData = data;
+            // content listeners
+            $('.list-item').click((e) => {
+                $('.list-item.active').removeClass('active');
+                $(e.currentTarget).addClass('active');
+                activeItem = $(e.currentTarget).attr('sequence'); 
+                // Edit tool bar button
+                $('#downloadButton').removeClass('disabled');
+                $('#deleteButton').removeClass('disabled');
+                e.stopPropagation();
+            });
+
+            $('#content-panel').click(() => {
+                $('.list-item.active').removeClass('active');
+                activeItem = -1;
+                $('#downloadButton').addClass('disabled');
+                $('#deleteButton').addClass('disabled');
+            });
+
+            $('.list-item').dblclick((e) => {
+                activeItem = $(e.currentTarget).attr('sequence');
+                trigerItem(activeItem);
+            });
+        }
+
+        const trigerItem = (i) => {
+            const item = contentData[i];
+            if (item.type === 'file') {
+                // Download file
+            } else if (item.type === 'directory') {
+                // Open directory
+                sessionStorage.setItem('penncloud_drive_path', item.rid);
+                location.href = '/drive';
+            }
+        }
+
+        const fetchDriveContent = (username, path) => {
+            console.log('path: '+path);
+            $.ajax({
+                url: `/getStorageContent?username=${username}&path=${path}`,
+                header: {'Content-Type': 'application/json'},
+                success: (result) => {
+                    console.log(result);
+                    renderContents(result);
+                },
+                fail: (err) => {
+                    console.log(err);
+                }
+            });
+        }
+
+        const renderPathBar = () => {
+            
+        }
+        
+        const username = sessionStorage.getItem('penncloud_uid');
+        $('.user-info h4').html(username);
+        const path = sessionStorage.getItem('penncloud_drive_path');
+        if (path === null) sessionStorage.setItem('penncloud_drive_path', '/');
+
+        var contentData = [];
+        fetchDriveContent(username, path);
+
+        var activeItem = -1;
+    </script>
+</body>
+</html>
