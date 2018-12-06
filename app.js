@@ -91,51 +91,53 @@ app.get('/getStorageContent', function(req, res) {
     console.log(req.query.path);
     if (req.query.path === '/') {
         res.json([{
-            rid: '/myDocs/',
+            uid: '/myDocs/',
             name: 'myDocs',
             type: 'directory'
         }, {
-            rid: '/myProjects/',
+            uid: '/myProjects/',
             name: 'myProjects',
             type: 'directory'
         }, {
-            rid: '/readme.txt',
+            uid: '/readme.txt',
             name: 'readme.txt',
             type: 'file'
         }, {
-            rid: '/HelloWorld.mp4',
-            name: 'HelloWorld.mp4',
-            type: 'file'
-        }, {
-            rid: '/myDocs/',
-            name: 'myDocs',
-            type: 'directory'
-        }, {
-            rid: '/myProjects/',
-            name: 'myProjects',
-            type: 'directory'
-        }, {
-            rid: '/readme.txt',
-            name: 'readme.txt',
-            type: 'file'
-        }, {
-            rid: '/HelloWorld.mp4',
+            uid: '/HelloWorld.mp4',
             name: 'HelloWorld.mp4',
             type: 'file'
         }]);
     } else if (req.query.path === '/myDocs/') {
         res.json([{
-                rid: '/myDocs/doc1.txt',
+                uid: '/myDocs/doc1.txt',
                 name: 'doc1.txt',
                 type: 'file'
         }, {
-                rid: '/myDocs/doc2.txt',
+                uid: '/myDocs/doc2.txt',
                 name: 'doc2.txt',
                 type: 'file'
         }]);
+    } else if (req.query.path === '/myProjects/') {
+        res.json([{
+                uid: '/myProjects/readme.md',
+                name: 'readme.md',
+                type: 'file'
+        }, {
+                uid: '/myProjects/main.c',
+                name: 'main.c',
+                type: 'file'
+        }]);
+    } else {
+        res.status(404).send();
     }
 });
-
+app.post('/createDirectory', function(req, res) { 
+    res.status(200).send();
+});
+app.post('/createFile', function(req, res) { 
+    console.log(req.body);
+    res.status(200).send();
+});
 // End eric app test
 
 app.post('/', function(req, res) {

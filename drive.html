@@ -13,6 +13,14 @@
             body * {
                 box-sizing: border-box;
             }
+            a.blue-link {
+                color: #28f;
+                cursor: pointer;
+                text-decoration: none;
+            }
+            a.blue-link:hover {
+                text-decoration: underline;
+            }
             .nav-bar {
                 width: 100%;
                 height: 4rem;
@@ -31,20 +39,20 @@
                 cursor: pointer;
             }
             .nav-bar h4 {
-                margin: 0;
+                margin: 0.2rem 0 0 0;
                 font-size: 1.2em;
                 display: inline-block;
                 color: #555;
                 cursor: pointer;
             }
-            .nav-bar a {
+            .nav-bar h3 a {
                 text-decoration: none;
                 color: #222;
+                cursor: pointer;
             }
-            .nav-bar a:hover {
+            .nav-bar h3 a:hover {
                 color: #777;
             }
-
             .nav-bar .user-info {
                 float: right;
             }
@@ -89,6 +97,13 @@
             .tool-bar img {
                 height: 2.3rem;
             }
+            #pathBar {
+                margin: 0.6rem 0 0 1rem;
+            }
+            #pathBar span {
+                margin: 0 0.2em;
+                font-weight: 500;
+            }
             #content-panel {
                 padding: 1rem 2rem;      
             }
@@ -125,6 +140,50 @@
                 overflow-wrap: break-word;
                 overflow: hidden;
             }
+            .page-blocker {
+                width: 100%;
+                height: 100%;
+                background-color: #fff;
+                opacity: 0.6;
+                position: absolute;
+                z-index: 3000;
+                display: none;
+            }
+            #dialogWindow {
+                width: 30rem;
+                height: 11rem;
+                position: absolute;
+                top: 10px;
+                bottom: 30px;
+                left: 0;
+                right: 0;
+                margin: auto;
+                background-color: #fff;
+                box-shadow: #888 2px 2px 9px;
+                z-index: 5000;
+                padding: 2rem 1.6rem;
+                display: none;
+            }
+            #dialogWindow p {
+                margin: 0;
+                font-size: 1.3em;
+                color: #666;
+            }
+            #dialogWindow input {
+                width: 100%;
+                margin-top: 1rem;
+                font-size: 1em;
+            }
+            #dialogWindow div {
+                margin-top: 2rem;
+                float: right;
+            }
+            #okButton {
+                margin-right: 1rem;
+            }
+            #cancelButton {
+                margin-right: 2rem;
+            }
         </style>
     </head>
 <body>
@@ -132,9 +191,18 @@
         <h3><a href='/'>PennCloud</a></h3>
         <div class='user-info'>
             <h4></h4>
-            <a>log out</a>
+            <a class='blue-link'>log out</a>
         </div>
     </div>
+    <div class='page-blocker'></div>
+    <div id='dialogWindow'>
+            <p></p>
+            <input type="text">
+            <div>
+                <a id='okButton' class='blue-link'>OK</a>
+                <a id='cancelButton' class='blue-link'>Cancel</a>
+            </div>
+        </div>
     <div class='main-container'>
         <div class='tool-bar-container'>
             <div class='tool-bar'>
@@ -144,9 +212,34 @@
                 <a id='deleteButton' class='disabled'><img src='/public/assets/trash.png'><img src='/public/assets/trash_disabled.png'></a>
             </div>
         </div>
+        <div id='pathBar'><span>PennDrive >> </span></div>
         <div id='content-panel'></div>
+        <!-- <form id="fileinfo" enctype="multipart/form-data" method="post" name="fileinfo" action="/createFile">
+            <label>File to stash:</label>
+            <input type="file" name="file" required />
+            <input type="submit" name="sumbit">
+        </form> -->
     </div>
     <script type="text/javascript">
+        const CREATE_DIRECTORY_MESSAGE = "Create new directory";
+
+        const clearDialogWindow = () => {
+            $('#dialogWindow').hide();
+            $('.page-blocker').hide();
+        }
+
+        const showDialogWindow = (message, success) => {
+            $('.page-blocker').show();
+            $('#dialogWindow p').html(message);
+            $('#dialogWindow').show();
+            $('#okButton').click(() => {
+                success($('#dialogWindow input').val());
+            });
+            $('#cancelButton').click(() => {
+                clearDialogWindow();
+            });
+        }
+
         const renderContentItem = (data) => {
             const item_type = data.type === 'directory' ? 'type-d' : 'type-f';
             const item_logo = data.type === 'directory'
@@ -189,14 +282,41 @@
             });
         }
 
+        const renderPathBar = (path) => {
+            components = path.split('/');
+            components.pop();
+            // Exampler: '/muDocs/public/app.js' = ['','myDocs','public','']
+            var new_path = '/';
+            for (var i in components) {
+                var link;
+                if (i == 0) {
+                    link = $(`<a class='blue-link'>${username}</a>`);
+                    const dest = new_path;
+                    $(link).click(() => {
+                        sessionStorage.setItem('penncloud_drive_path', dest);
+                        location.href = '/drive';
+                    });
+                } else {
+                    link = $(`<a class='blue-link'>${components[i]}</a>`);
+                    new_path += components[i]+'/';
+                    const dest = new_path;
+                    $(link).click(() => {
+                        sessionStorage.setItem('penncloud_drive_path', dest);
+                        location.href = '/drive';
+                    });
+                }
+                $('#pathBar').append(link).append('<span>/</span>');
+            }
+        }
+       
         const trigerItem = (i) => {
             const item = contentData[i];
             if (item.type === 'file') {
                 // Download file
             } else if (item.type === 'directory') {
                 // Open directory
-                sessionStorage.setItem('penncloud_drive_path', item.rid);
-                location.href = '/drive';
+                sessionStorage.setItem('penncloud_drive_path', item.uid);
+                location.href = location.href;
             }
         }
 
@@ -209,25 +329,70 @@
                     console.log(result);
                     renderContents(result);
                 },
-                fail: (err) => {
+                error: (err) => {
                     console.log(err);
+                    sessionStorage.setItem('penncloud_drive_path', '/');
+                    location.href = '/drive';
                 }
             });
         }
 
-        const renderPathBar = () => {
-            
+        const sendCreateNewDirectory = (username, uid, success) => {
+            console.log(`new directory: ${uid}`);
+            $.ajax({
+                url: '/createDirectory',
+                type: 'POST',
+                header: {'Content-Type': 'application/json'},
+                data: {
+                    uid: uid,
+                    username: username
+                },
+                success: () => {
+                    console.log('Directory created!');
+                    success();
+                },
+                error: (err) => {
+                    console.log(err);
+                }
+            });
         }
-        
+ 
         const username = sessionStorage.getItem('penncloud_uid');
         $('.user-info h4').html(username);
+        if (sessionStorage.getItem('penncloud_drive_path') === null) {
+            sessionStorage.setItem('penncloud_drive_path', '/');
+        }
         const path = sessionStorage.getItem('penncloud_drive_path');
-        if (path === null) sessionStorage.setItem('penncloud_drive_path', '/');
 
         var contentData = [];
         fetchDriveContent(username, path);
+        renderPathBar(path);
 
-        var activeItem = -1;
+        var activeItem = -1
+
+        $('#uploadButton').click(() => {
+            // var formData = new FormData();
+            // formData.append('file', $('input[type=file]')[0].files[0]);
+            // console.log($('input[type=file]')[0].files[0]);
+            // $.ajax({
+            //     url: '/createFile',  
+            //     type: 'POST',
+            //     data: formData,
+            //     success: (data) => {
+            //     },
+            //     cache: false,
+            //     contentType: false,
+            //     processData: false
+            // });
+        });
+
+        $('#newDirectoryButton').click(() => {
+            showDialogWindow(CREATE_DIRECTORY_MESSAGE, (dirname) => {
+                sendCreateNewDirectory(username, path+dirname, () => {
+                    location.href = location.href;
+                });
+            });
+        });
     </script>
 </body>
 </html>

@@ -14,6 +14,14 @@
             body * {
                 box-sizing: border-box;
             }
+            a.blue-link {
+                color: #28f;
+                cursor: pointer;
+                text-decoration: none;
+            }
+            a.blue-link:hover {
+                text-decoration: underline;
+            }
             .nav-bar {
                 width: 100%;
                 height: 4rem;
@@ -32,24 +40,23 @@
                 cursor: pointer;
             }
             .nav-bar h4 {
-                margin: 0;
+                margin: 0.2rem 0 0 0;
                 font-size: 1.2em;
                 display: inline-block;
                 color: #555;
                 cursor: pointer;
             }
-            .nav-bar a {
+            .nav-bar h3 a {
                 text-decoration: none;
                 color: #222;
+                cursor: pointer;
             }
-            .nav-bar a:hover {
+            .nav-bar h3 a:hover {
                 color: #777;
             }
-
             .nav-bar .user-info {
                 float: right;
             }
-
             .main-container {
                 width: 100%;
                 height: 100%;
@@ -96,7 +103,7 @@
         <h3><a href='/'>PennCloud</a></h3>
         <div class='user-info'>
             <h4></h4>
-            <a>log out</a>
+            <a class='blue-link'>log out</a>
         </div>
     </div>
     <div class='main-container'>
