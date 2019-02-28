@@ -20,13 +20,13 @@ exports.insert = (collName, obj) => {
     });
 }
 
-exports.query = (collName, query) => {
+exports.query = (collName, query, filter) => {
     return new Promise((resolve, reject) => {
 
         MongoClient.connect(url, dbConfig, (err, db) => {
             if (err) return reject(err);
             const dbo = db.db(dbName);
-            dbo.collection(collName).find(query).toArray((err, res) => {
+            dbo.collection(collName).find(query, filter).toArray((err, res) => {
                 if (err) return reject(err);
                 db.close();
                 resolve(res);
