@@ -4,7 +4,7 @@
  */
 'use strict';
     
-const attrs = ['group_name', 'task_count', 'finished_count', 'color', 'order'];
+const attrs = ['_id', 'group_name', 'task_count', 'finished_count', 'color', 'order'];
 
 class TaskGroup {
 

@@ -17,6 +17,7 @@ exports.create_group = (user_id, group) => {
                 reject('group name exist!');
             } else {
                 // Add group to db
+                group._id = uuid.v1();
                 group.task_count = 0;
                 group.finished_count = 0;
                 if ( !group.color ) group.color = 0;
@@ -44,15 +45,15 @@ exports.create_group = (user_id, group) => {
     });
 }
 
-exports.get_groups = (user_id) => {
+exports.get_taskinfo = (user_id) => {
     return new Promise((resolve, reject) => {
         // Query for task groups
         dao.query(USER_DB, {
             _id: user_id,
         }, {
-            "taskInfo.taskGroups": 1
+            "taskInfo": 1
         }).then((rows) => {
-            resolve(rows[0].taskInfo.taskGroups);
+            resolve(rows[0].taskInfo);
         }, (err) => {
             reject(err);
         });
@@ -61,8 +62,45 @@ exports.get_groups = (user_id) => {
 }
 
 exports.update_group = (user_id, group) => {
+    const group_id = group._id;
+    delete group["_id"]
+    const set_argument = {}
+    for (const key in group) {
+        set_argument["taskInfo.taskGroups.$."+key] = group[key]
+    }
+
     return new Promise((resolve, reject) => {
-        
+        dao.update(USER_DB, {
+            _id: user_id,
+            "taskInfo.taskGroups._id": group_id
+        }, {
+            "$set": set_argument
+        }).then((rows) => {
+            resolve();
+        }, (err) => {
+            reject(err);
+        });
+    });
+}
+
+exports.delete_group = (user_id, group_id) => {
+    return new Promise((resolve, reject) => {
+        dao.update(USER_DB, {
+            _id: user_id,
+        }, {
+            $pull: {
+                "taskInfo.tasks": {
+                    "group": group_id
+                },
+                "taskInfo.taskGroups": {
+                    _id: group_id
+                }
+            }
+        }).then(() => {
+            resolve();
+        }, (err) => {
+            reject(err);
+        });
     });
 }
 
@@ -88,7 +126,45 @@ exports.create_task = (user_id, task) => {
     });
 }
 
+exports.update_task = (user_id, task) => {
+    const task_id = task._id;
+    delete task["_id"]
+    const set_argument = {}
+    for (const key in task) {
+        set_argument["taskInfo.tasks.$."+key] = task[key]
+    }
 
+    return new Promise((resolve, reject) => {
+        dao.update(USER_DB, {
+            _id: user_id,
+            "taskInfo.tasks._id": task_id
+        }, {
+            "$set": set_argument
+        }).then((rows) => {
+            resolve();
+        }, (err) => {
+            reject(err);
+        });
+    });
+}
+
+exports.delete_task = (user_id, task_id) => {
+    return new Promise((resolve, reject) => {
+        dao.update(USER_DB, {
+            _id: user_id,
+        }, {
+            $pull: {
+                "taskInfo.tasks": {
+                    "_id": task_id
+                }
+            }
+        }).then(() => {
+            resolve();
+        }, (err) => {
+            reject(err);
+        });
+    });
+}
 // exports.update = (user_id, expense) => {
 //     return new Promise((resolve, reject) => {
 //         dao.update(USER_DB, {

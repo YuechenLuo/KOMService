@@ -33,8 +33,8 @@ router.put('/createGroup', (req, res) => {
 
 
 // [GET] get task groups
-router.get('/getGroups', (req, res) => {
-    taskModule.get_groups(req.userId)
+router.get('/getTasks', (req, res) => {
+    taskModule.get_taskinfo(req.userId)
     .then((obj) => {
         respondObj(res, 200, obj)
     }, (err) => {
@@ -44,7 +44,22 @@ router.get('/getGroups', (req, res) => {
 
 // [POST] update task group
 router.post('/updateGroup', (req, res) => {
-    
+    taskModule.update_group(req.userId, new TaskGroup(req))
+    .then((obj) => {
+        respondObj(res, 200, obj)
+    }, (err) => {
+        respond(res, 500, `Unable to update task group. (Error: ${err})`);
+    });
+});
+
+// [DELETE] delete task group
+router.delete('/group/:id', (req, res) => {
+    taskModule.delete_group(req.userId, req.params.id)
+    .then((obj) => {
+        respondObj(res, 200, obj)
+    }, (err) => {
+        respond(res, 500, `Unable to delete task group. (Error: ${err})`);
+    });
 });
 
 // [PUT] create task
@@ -54,6 +69,26 @@ router.put('/createTask', (req, res) => {
         respondObj(res, 200, obj)
     }, (err) => {
         respond(res, 500, `Unable to create task. (Error: ${err})`);
+    });
+});
+
+// [POST] update task group
+router.post('/updateTask', (req, res) => {
+    taskModule.update_task(req.userId, new Task(req))
+    .then((obj) => {
+        respondObj(res, 200, obj)
+    }, (err) => {
+        respond(res, 500, `Unable to update task. (Error: ${err})`);
+    });
+});
+
+// [DELETE] delete task
+router.delete('/:id', (req, res) => {
+    taskModule.delete_task(req.userId, req.params.id)
+    .then((obj) => {
+        respondObj(res, 200, obj)
+    }, (err) => {
+        respond(res, 500, `Unable to delete task. (Error: ${err})`);
     });
 });
 

@@ -1,0 +1,77 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'install' ]
+2 info using npm@3.5.2
+3 info using node@v4.2.6
+4 silly loadCurrentTree Starting
+5 silly install loadCurrentTree
+6 silly install readLocalPackageData
+7 silly install normalizeTree
+8 silly loadCurrentTree Finishing
+9 silly loadIdealTree Starting
+10 silly install loadIdealTree
+11 silly cloneCurrentTree Starting
+12 silly install cloneCurrentTreeToIdealTree
+13 silly cloneCurrentTree Finishing
+14 silly loadShrinkwrap Starting
+15 silly install loadShrinkwrap
+16 silly loadShrinkwrap Finishing
+17 silly loadAllDepsIntoIdealTree Starting
+18 silly install loadAllDepsIntoIdealTree
+19 silly fetchNamedPackageData node-uuid
+20 silly mapToRegistry name node-uuid
+21 silly mapToRegistry using default registry
+22 silly mapToRegistry registry https://registry.npmjs.org/
+23 silly mapToRegistry uri https://registry.npmjs.org/node-uuid
+24 verbose request uri https://registry.npmjs.org/node-uuid
+25 verbose request no auth needed
+26 info attempt registry request try #1 at 11:41:39 AM
+27 verbose request id 25d54ec9deca5a27
+28 http request GET https://registry.npmjs.org/node-uuid
+29 info retry will retry, error on last attempt: Error: tunneling socket could not be established, cause=connect ECONNREFUSED 127.0.0.1:43537
+30 info attempt registry request try #2 at 11:41:49 AM
+31 http request GET https://registry.npmjs.org/node-uuid
+32 info retry will retry, error on last attempt: Error: tunneling socket could not be established, cause=connect ECONNREFUSED 127.0.0.1:43537
+33 info attempt registry request try #3 at 11:42:49 AM
+34 http request GET https://registry.npmjs.org/node-uuid
+35 silly fetchPackageMetaData Error: tunneling socket could not be established, cause=connect ECONNREFUSED 127.0.0.1:43537
+35 silly fetchPackageMetaData     at ClientRequest.onError (/usr/share/npm/node_modules/request/node_modules/tunnel-agent/index.js:174:17)
+35 silly fetchPackageMetaData     at ClientRequest.g (events.js:260:16)
+35 silly fetchPackageMetaData     at emitOne (events.js:77:13)
+35 silly fetchPackageMetaData     at ClientRequest.emit (events.js:169:7)
+35 silly fetchPackageMetaData     at Socket.socketErrorListener (_http_client.js:258:9)
+35 silly fetchPackageMetaData     at emitOne (events.js:77:13)
+35 silly fetchPackageMetaData     at Socket.emit (events.js:169:7)
+35 silly fetchPackageMetaData     at emitErrorNT (net.js:1256:8)
+35 silly fetchPackageMetaData     at nextTickCallbackWith2Args (node.js:441:9)
+35 silly fetchPackageMetaData     at process._tickCallback (node.js:355:17)
+35 silly fetchPackageMetaData  error for node-uuid@^1.4.8 { [Error: tunneling socket could not be established, cause=connect ECONNREFUSED 127.0.0.1:43537] code: 'ECONNRESET' }
+36 silly rollbackFailedOptional Starting
+37 silly rollbackFailedOptional Finishing
+38 silly runTopLevelLifecycles Starting
+39 silly runTopLevelLifecycles Finishing
+40 silly install printInstalled
+41 verbose stack Error: tunneling socket could not be established, cause=connect ECONNREFUSED 127.0.0.1:43537
+41 verbose stack     at ClientRequest.onError (/usr/share/npm/node_modules/request/node_modules/tunnel-agent/index.js:174:17)
+41 verbose stack     at ClientRequest.g (events.js:260:16)
+41 verbose stack     at emitOne (events.js:77:13)
+41 verbose stack     at ClientRequest.emit (events.js:169:7)
+41 verbose stack     at Socket.socketErrorListener (_http_client.js:258:9)
+41 verbose stack     at emitOne (events.js:77:13)
+41 verbose stack     at Socket.emit (events.js:169:7)
+41 verbose stack     at emitErrorNT (net.js:1256:8)
+41 verbose stack     at nextTickCallbackWith2Args (node.js:441:9)
+41 verbose stack     at process._tickCallback (node.js:355:17)
+42 verbose cwd /home/peter/Developer/KingdomOfMorocco/KOMService
+43 error Linux 4.4.0-139-generic
+44 error argv "/usr/bin/nodejs" "/usr/bin/npm" "install"
+45 error node v4.2.6
+46 error npm  v3.5.2
+47 error code ECONNRESET
+48 error network tunneling socket could not be established, cause=connect ECONNREFUSED 127.0.0.1:43537
+49 error network This is most likely not a problem with npm itself
+49 error network and is related to network connectivity.
+49 error network In most cases you are behind a proxy or have bad network settings.
+49 error network
+49 error network If you are behind a proxy, please make sure that the
+49 error network 'proxy' config is set properly.  See: 'npm help config'
+50 verbose exit [ 1, true ]
