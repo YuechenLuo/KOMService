@@ -32,13 +32,13 @@ router.put('/createGroup', (req, res) => {
 });
 
 
-// [GET] get task groups
+// [GET] get task info
 router.get('/getTasks', (req, res) => {
     taskModule.get_taskinfo(req.userId)
     .then((obj) => {
         respondObj(res, 200, obj)
     }, (err) => {
-        respond(res, 500, `Unable to create task group. (Error: ${err})`);
+        respond(res, 500, `Unable to get task info. (Error: ${err})`);
     });
 });
 
