@@ -17,7 +17,7 @@ router.use((req, res, next) => {
         req.userId = id;
         next();
     }, (err) => {
-        respond(res, 500, `Authentication failed. (Error: ${err})`);
+        respond(res, 403, `Authentication failed. (Error: ${err})`);
     });
 });
 
