@@ -26,6 +26,10 @@ exports.signUp = (user) => {
                 credit: 1500,
                 records: []
             }
+            user.taskInfo = {
+                taskGroups: [],
+                tasks: []
+            }
 
             dao.insert(USER_DB, user)
             resolve();
