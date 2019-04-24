@@ -57,7 +57,7 @@ exports.authentication = (user) => {
                 const accessToken = jwt.sign({
                     userId: rows[0]._id
                 }, appConfig.secretKey, {
-                    expiresIn: '1d'
+                    expiresIn: '30d'
                 });
                 // console.log(user_id);        
                 // save token info to user table
